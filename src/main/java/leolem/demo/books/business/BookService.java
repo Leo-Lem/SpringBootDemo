@@ -1,4 +1,4 @@
-package leolem.demo.business;
+package leolem.demo.books.business;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.data.BookRepository;
-import leolem.demo.data.model.Book;
+import leolem.demo.books.data.Book;
+import leolem.demo.books.data.BookRepository;
 import lombok.val;
 
 @Service

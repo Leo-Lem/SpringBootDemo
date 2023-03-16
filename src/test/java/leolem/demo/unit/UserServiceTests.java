@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.*;
 
-import leolem.demo.business.UserService;
-import leolem.demo.data.UserRepository;
-import leolem.demo.data.model.User;
+import leolem.demo.users.business.UserService;
+import leolem.demo.users.data.User;
+import leolem.demo.users.data.UserRepository;
 import lombok.val;
 
 public class UserServiceTests {

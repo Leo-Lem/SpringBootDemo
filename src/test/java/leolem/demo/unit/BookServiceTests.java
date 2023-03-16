@@ -20,10 +20,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import lombok.val;
-
-import leolem.demo.business.BookService;
-import leolem.demo.data.BookRepository;
-import leolem.demo.data.model.Book;
+import leolem.demo.books.business.BookService;
+import leolem.demo.books.data.Book;
+import leolem.demo.books.data.BookRepository;
 
 public class BookServiceTests {
 

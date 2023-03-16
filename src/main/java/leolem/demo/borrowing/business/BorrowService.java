@@ -1,10 +1,10 @@
-package leolem.demo.business;
+package leolem.demo.borrowing.business;
 
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.data.model.*;
-import leolem.demo.data.*;
+import leolem.demo.books.data.*;
+import leolem.demo.users.data.*;
 import lombok.RequiredArgsConstructor;
 
 @Service

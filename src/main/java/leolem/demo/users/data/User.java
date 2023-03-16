@@ -1,8 +1,9 @@
-package leolem.demo.data.model;
+package leolem.demo.users.data;
 
 import java.util.List;
 
 import jakarta.persistence.*;
+import leolem.demo.books.data.Book;
 import lombok.*;
 
 @Entity(name = "_user")

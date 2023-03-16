@@ -1,4 +1,4 @@
-package leolem.demo.web;
+package leolem.demo.books.web;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.val;
-
-import leolem.demo.business.BookService;
-import leolem.demo.web.dto.UpdateBookRequest;
-import leolem.demo.web.dto.BookResponse;
-import leolem.demo.web.dto.CreateBookRequest;
+import leolem.demo.books.business.BookService;
+import leolem.demo.books.web.dto.BookResponse;
+import leolem.demo.books.web.dto.CreateBookRequest;
+import leolem.demo.books.web.dto.UpdateBookRequest;
 
 @RestController
 @RequestMapping("/admin/books")

@@ -1,8 +1,8 @@
-package leolem.demo.web.dto;
+package leolem.demo.books.web.dto;
 
 import java.time.format.DateTimeFormatter;
 
-import leolem.demo.data.model.Book;
+import leolem.demo.books.data.Book;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

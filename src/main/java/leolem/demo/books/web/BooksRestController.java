@@ -1,4 +1,4 @@
-package leolem.demo.web;
+package leolem.demo.books.web;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.business.BookService;
-import leolem.demo.web.dto.BookResponse;
+import leolem.demo.books.business.BookService;
+import leolem.demo.books.web.dto.BookResponse;
 import lombok.val;
 
 @RestController

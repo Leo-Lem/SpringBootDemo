@@ -1,6 +1,6 @@
-package leolem.demo.web.dto;
+package leolem.demo.users.web.dto;
 
-import leolem.demo.data.model.User;
+import leolem.demo.users.data.User;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

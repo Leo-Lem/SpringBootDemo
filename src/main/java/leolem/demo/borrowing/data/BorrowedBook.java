@@ -1,4 +1,4 @@
-package leolem.demo.data.model;
+package leolem.demo.borrowing.data;
 
 import jakarta.persistence.*;
 import lombok.*;

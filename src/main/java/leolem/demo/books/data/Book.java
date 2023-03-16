@@ -1,9 +1,10 @@
-package leolem.demo.data.model;
+package leolem.demo.books.data;
 
 import java.time.LocalDate;
 import java.util.*;
 
 import jakarta.persistence.*;
+import leolem.demo.users.data.User;
 import lombok.*;
 
 @Entity(name = "book")

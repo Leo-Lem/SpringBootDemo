@@ -1,4 +1,4 @@
-package leolem.demo.business;
+package leolem.demo.users.business;
 
 import java.util.Optional;
 
@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.data.UserRepository;
-import leolem.demo.data.model.User;
+import leolem.demo.users.data.User;
+import leolem.demo.users.data.UserRepository;
 import lombok.val;
 
 @Service

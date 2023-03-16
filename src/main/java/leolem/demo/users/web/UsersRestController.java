@@ -1,4 +1,4 @@
-package leolem.demo.web;
+package leolem.demo.users.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.business.UserService;
-import leolem.demo.web.dto.*;
+import leolem.demo.users.business.UserService;
+import leolem.demo.users.web.dto.*;
 import lombok.val;
 
 @RestController

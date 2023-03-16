@@ -1,8 +1,6 @@
-package leolem.demo.data;
+package leolem.demo.books.data;
 
 import org.springframework.data.repository.CrudRepository;
-
-import leolem.demo.data.model.Book;
 
 public interface BookRepository extends CrudRepository<Book, Long> {
 
