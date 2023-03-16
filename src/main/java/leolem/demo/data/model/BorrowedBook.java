@@ -1,8 +1,10 @@
-package leolem.demo.model;
+package leolem.demo.data.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity(name = "borrowed_book")
+@Data
 public class BorrowedBook {
 
   @Id

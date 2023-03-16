@@ -1,11 +1,15 @@
-package leolem.demo.model;
+package leolem.demo.data.model;
 
-import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity(name = "_user")
+@Data
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
   @Id
@@ -27,9 +31,5 @@ public class User {
   @ManyToMany
   @JoinTable(name = "borrowed_book", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "book_id"))
   private List<Book> borrowedBooks;
-
-  public List<Book> getBorrowedBooks() {
-    return Collections.unmodifiableList(borrowedBooks);
-  }
 
 }

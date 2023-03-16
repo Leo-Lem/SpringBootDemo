@@ -1,4 +1,4 @@
-package leolem.demo.controllers;
+package leolem.demo.web;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,23 +8,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import leolem.demo.controllers.dto.BookResponse;
-import leolem.demo.services.GetBookService;
+import leolem.demo.business.BookService;
+import leolem.demo.web.dto.BookResponse;
 
 @RestController
 @RequestMapping("/books")
 public class BooksRestController {
 
-  private final GetBookService getBookService;
+  private final BookService bookService;
 
   @Autowired
-  public BooksRestController(GetBookService getBookService) {
-    this.getBookService = getBookService;
+  public BooksRestController(BookService bookService) {
+    this.bookService = bookService;
   }
 
   @GetMapping
   public List<BookResponse> fetchAllBooks() {
-    return getBookService.getAllBooks()
+    return bookService.readAll()
         .stream()
         .map(book -> new BookResponse(book))
         .collect(Collectors.toList());

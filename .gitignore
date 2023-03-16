@@ -1,3 +1,9 @@
-.DS_Store
+# project
 target
+
+# IDE
 demo.code-workspace
+.vscode
+
+# OS
+.DS_Store
