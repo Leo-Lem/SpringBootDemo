@@ -27,7 +27,7 @@ public class Book {
   @Column(name = "publication")
   private LocalDate publishedOn;
 
-  @Column(name = "numberOfInstances")
+  @Column(name = "available_copies")
   private int availableCopies;
 
   @ManyToMany(mappedBy = "borrowedBooks")

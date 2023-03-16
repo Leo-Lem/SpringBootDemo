@@ -68,6 +68,8 @@ public class UsersRestController {
       return ResponseEntity.ok().body(userResponse);
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().body("Invalid argument: " + e.getMessage());
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.notFound().build();
     }
   }
 

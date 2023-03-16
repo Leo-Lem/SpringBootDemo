@@ -1,9 +1,9 @@
-package leolem.demo.borrowing;
+package leolem.demo.borrow;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "leolem.demo.borrowing")
-public class BorrowingModuleConfiguration {
+@ComponentScan(basePackages = "leolem.demo.borrow")
+public class BorrowModuleConfiguration {
 }
