@@ -30,15 +30,16 @@ public class UserServiceTests {
   }
 
   @Test
-  void testCreating() {
-    val name = "John";
-    val firstName = "Wayne";
+  void testRegistering() {
+    val name = "Wayne";
+    val firstName = "John";
     val email = "jwayne@xyz.com";
     val password = "1234";
 
-    mockSaving();
+    when(userRepository.save(any(User.class)))
+        .then(AdditionalAnswers.returnsFirstArg());
 
-    val book = userService.create(name, firstName, email, password);
+    val book = userService.register(name, firstName, email, password);
 
     assertEquals(book.getName(), name);
     assertEquals(book.getFirstName(), firstName);
@@ -48,9 +49,22 @@ public class UserServiceTests {
 
   @Test
   void testReadingById() {
-    mockFindingById();
-    val book = userService.readById(1);
-    assertNotNull(book);
+    when(userRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new User()));
+
+    val user = userService.readById(1);
+
+    assertNotNull(user);
+  }
+
+  @Test
+  void testReadingByEmail() {
+    when(userRepository.findByEmail(anyString()))
+        .thenReturn(Optional.of(new User()));
+
+    val user = userService.readByEmail("jwayne@xyz.com");
+
+    assertNotNull(user);
   }
 
   @Test
@@ -60,40 +74,30 @@ public class UserServiceTests {
     val email = "jwayne@xyz.com";
     val password = "1234";
 
-    mockFindingById();
-    mockSaving();
+    when(userRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new User()));
+    when(userRepository.save(any(User.class)))
+        .then(AdditionalAnswers.returnsFirstArg());
 
-    val book = userService.update(
+    val user = userService.update(
         1,
         Optional.of(name),
         Optional.of(firstName),
         Optional.of(email),
         Optional.of(password));
 
-    assertEquals(book.getName(), name);
-    assertEquals(book.getFirstName(), firstName);
-    assertEquals(book.getEmail(), email);
-    assertEquals(book.getPassword(), password);
+    assertEquals(user.getName(), name);
+    assertEquals(user.getFirstName(), firstName);
+    assertEquals(user.getEmail(), email);
+    assertEquals(user.getPassword(), password);
   }
 
   @Test
   void testDeleting() {
-    when(userRepository.existsById(anyInt()))
+    when(userRepository.existsById(anyLong()))
        .thenReturn(true);
 
-    val wasSuccessful = userService.delete(1);
-
-    assertTrue(wasSuccessful);
-  }
-
-  private void mockSaving() {
-    when(userRepository.save(any(User.class)))
-        .then(AdditionalAnswers.returnsFirstArg());
-  }
-
-  private void mockFindingById() {
-    when(userRepository.findById(anyInt()))
-        .thenReturn(Optional.of(new User()));
+    assertDoesNotThrow(() -> userService.delete(1));
   }
 
 }

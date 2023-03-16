@@ -1,10 +1,11 @@
 package leolem.demo.unit;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -44,7 +45,8 @@ public class BookServiceTests {
     val publishedOn = LocalDate.parse("1991-01-01");
     val availableCopies = 4;
 
-    mockSaving();
+    when(bookRepository.save(any()))
+        .then(AdditionalAnswers.returnsFirstArg());
 
     val book = bookService.create(title, author, publishedOn, availableCopies);
 
@@ -56,8 +58,11 @@ public class BookServiceTests {
 
   @Test
   void testReadingById() {
-    mockFindingById();
+    when(bookRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new Book()));
+
     val book = bookService.readById(1);
+
     assertNotNull(book);
   }
 
@@ -65,7 +70,9 @@ public class BookServiceTests {
   void testReadingAll() {
     when(bookRepository.findAll())
         .thenReturn(List.of(new Book()));
+
     val books = bookService.readAll();
+
     assertTrue(books.size() > 0);
   }
 
@@ -76,8 +83,10 @@ public class BookServiceTests {
     val publishedOn = LocalDate.parse("1991-01-01");
     val availableCopies = 4;
 
-    mockFindingById();
-    mockSaving();
+    when(bookRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new Book()));
+    when(bookRepository.save(any()))
+        .then(AdditionalAnswers.returnsFirstArg());
 
     val book = bookService.update(
         1,
@@ -94,22 +103,10 @@ public class BookServiceTests {
 
   @Test
   void testDeleting() {
-    when(bookRepository.existsById(anyInt()))
+    when(bookRepository.existsById(anyLong()))
        .thenReturn(true);
 
-    val wasSuccessful = bookService.delete(1);
-
-    assertTrue(wasSuccessful);
-  }
-
-  private void mockSaving() {
-    when(bookRepository.save(any()))
-        .then(AdditionalAnswers.returnsFirstArg());
-  }
-
-  private void mockFindingById() {
-    when(bookRepository.findById(anyInt()))
-        .thenReturn(Optional.of(new Book()));
+    assertDoesNotThrow(() -> bookService.delete(1));
   }
 
 }

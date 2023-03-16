@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 public class BookResponse {
-  private final int id;
+  private final long id;
   private final String title;
   private final String author;
   private final String publication;

@@ -1,11 +1,14 @@
 package leolem.demo.web;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.val;
 
 import leolem.demo.business.BookService;
@@ -17,12 +20,8 @@ import leolem.demo.web.dto.CreateBookRequest;
 @RequestMapping("/admin/books")
 public class AdminBooksRestController {
 
-  private final BookService bookService;
-
   @Autowired
-  public AdminBooksRestController(BookService bookService) {
-    this.bookService = bookService;
-  }
+  private BookService bookService;
 
   @PostMapping
   ResponseEntity<?> create(@RequestBody CreateBookRequest request) {
@@ -32,7 +31,14 @@ public class AdminBooksRestController {
           request.getAuthor(),
           LocalDate.parse(request.getPublishedOn()),
           request.getAvailableCopies());
-      val bookResponse = new BookResponse(book);
+
+      val bookResponse = new BookResponse(
+          book.getId(),
+          book.getTitle(),
+          book.getAuthor(),
+          book.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+          book.getAvailableCopies());
+
       return ResponseEntity.ok().body(bookResponse);
     } catch (DateTimeParseException e) {
       return ResponseEntity.badRequest().body("Invalid date format: please use yyyy-MM-dd");
@@ -42,7 +48,7 @@ public class AdminBooksRestController {
   }
 
   @PutMapping("/{id}")
-  ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody UpdateBookRequest request) {
+  ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody UpdateBookRequest request) {
     try {
       val book = bookService.update(
           id,
@@ -50,17 +56,30 @@ public class AdminBooksRestController {
           request.getAuthor(),
           request.getPublishedOn().map(LocalDate::parse),
           request.getAvailableCopies());
-      val bookResponse = new BookResponse(book);
+
+      val bookResponse = new BookResponse(
+          book.getId(),
+          book.getTitle(),
+          book.getAuthor(),
+          book.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+          book.getAvailableCopies());
+
       return ResponseEntity.ok().body(bookResponse);
     } catch (DateTimeParseException e) {
       return ResponseEntity.badRequest().body("Invalid date format: please use yyyy-MM-dd");
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.notFound().build();
     }
   }
 
   @DeleteMapping("/{id}")
-  ResponseEntity<?> delete(@PathVariable("id") int id) {
-    val exists = bookService.delete(id);
-    return exists ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+  ResponseEntity<?> delete(@PathVariable("id") long id) {
+    try {
+      bookService.delete(id);
+      return ResponseEntity.ok().build();
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.notFound().build();
+    }
   }
 
 }

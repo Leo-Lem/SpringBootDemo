@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.data.UserRepository;
 import leolem.demo.data.model.User;
@@ -13,17 +14,17 @@ import lombok.val;
 @Service
 public class UserService {
 
-  private final UserRepository userRepository;
-
   @Autowired
-  public UserService(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+  private UserRepository userRepository;
 
-  public User create(String name, String firstName, String email, String password) {
+  public User register(String name, String firstName, String email, String password)
+      throws IllegalArgumentException, EntityExistsException {
     if (name == null || firstName == null || email == null || password == null) {
-      throw new IllegalArgumentException("Name, first name, e-mail AND password must be provided.");
+      throw new IllegalArgumentException("Name, first name, e-mail AND password are required");
     }
+
+    if (userRepository.existsByEmail(email))
+      throw new EntityExistsException("User with e-mail exists: " + email);
 
     val user = User.builder()
         .name(name)
@@ -35,19 +36,25 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public Optional<User> readById(int userId) throws EntityNotFoundException {
-    return userRepository.findById(userId);
+  public User readById(long id) throws EntityNotFoundException {
+    return userRepository
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException());
+  }
+
+  public User readByEmail(String email) throws EntityNotFoundException {
+    return userRepository
+        .findByEmail(email)
+        .orElseThrow(() -> new EntityNotFoundException());
   }
 
   public User update(
-      int id,
+      long id,
       Optional<String> name,
       Optional<String> firstName,
       Optional<String> email,
-      Optional<String> password) {
-    var user = userRepository
-        .findById(id)
-        .orElse(User.builder().id(id).build());
+      Optional<String> password) throws EntityNotFoundException {
+    var user = readById(id);
 
     name.ifPresent(user::setName);
     firstName.ifPresent(user::setFirstName);
@@ -57,11 +64,11 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public boolean delete(int id) {
-    val exists = userRepository.existsById(id);
-    if (exists)
-      userRepository.deleteById(id);
-    return exists;
+  public void delete(long id) throws EntityNotFoundException {
+    if (!userRepository.existsById(id))
+      throw new EntityNotFoundException();
+
+    userRepository.deleteById(id);
   }
 
 }

@@ -13,7 +13,7 @@ public class BorrowService {
   private final UserRepository userRepository;
   private final BookRepository bookRepository;
 
-  public void borrow(int bookId, int userId) throws EntityNotFoundException {
+  public void borrow(long bookId, long userId) throws EntityNotFoundException {
     User user = userRepository
         .findById(userId)
         .orElseThrow(() -> new EntityNotFoundException("Cannot find User with id: " + bookId));
