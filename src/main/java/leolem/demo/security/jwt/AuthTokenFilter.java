@@ -13,7 +13,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import leolem.demo.security.DemoUserDetailsService;
+import leolem.demo.security.AppUserDetailsService;
 import lombok.val;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -21,7 +21,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   private JWTUtils jwtUtils;
 
   @Autowired
-  private DemoUserDetailsService userDetailsService;
+  private AppUserDetailsService userDetailsService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

@@ -34,7 +34,7 @@ public class Book {
   private List<User> borrowers;
 
   public int getBorrowableCopies() {
-    return availableCopies - borrowers.size();
+    return availableCopies - (borrowers != null ? borrowers.size() : 0);
   }
 
 }

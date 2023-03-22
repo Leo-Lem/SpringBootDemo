@@ -1,11 +1,10 @@
-package leolem.demo.borrow.web;
+package leolem.demo.borrow;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.borrow.business.BorrowService;
 
 @RestController
 @RequestMapping("/borrow")

@@ -9,7 +9,7 @@ import leolem.demo.users.data.User;
 import leolem.demo.users.data.UserRepository;
 
 @Service
-public class DemoUserDetailsService implements UserDetailsService {
+public class AppUserDetailsService implements UserDetailsService {
 
   @Autowired
   UserRepository userRepository;

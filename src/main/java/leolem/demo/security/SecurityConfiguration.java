@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,14 +17,13 @@ import leolem.demo.security.jwt.AuthEntryPointJWT;
 import leolem.demo.security.jwt.AuthTokenFilter;
 
 @Configuration
-@EnableMethodSecurity(
-    // securedEnabled = true,
-    // jsr250Enabled = true,
-    prePostEnabled = true)
 public class SecurityConfiguration {
 
   @Autowired
-  DemoUserDetailsService userDetailsService;
+  AppUserDetailsService userDetailsService;
+
+  @Autowired
+  UserIDAuthorizationManager userIDAuthorizationManager;
 
   @Autowired
   private AuthEntryPointJWT unauthorizedHandler;
@@ -58,13 +56,18 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
     security.cors().and().csrf().disable()
-        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-        .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and().authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/users/**", "/books*").hasRole("USER")
-            .requestMatchers("/**").hasRole("ADMIN")
-            .anyRequest().denyAll())
+        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.GET, "/books", "/books/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/users", "/users/signin").permitAll())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.GET, "/users/**", "/books", "/books/**").hasRole("USER")
+            .requestMatchers(HttpMethod.POST, "/books").hasRole("USER"))
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/users/{userID}", "/borrow/*/{userID}").access(userIDAuthorizationManager)
+            .requestMatchers("/**").hasRole("ADMIN"))
+        .authorizeHttpRequests().anyRequest().denyAll().and()
         .httpBasic();
 
     security.authenticationProvider(authenticationProvider());

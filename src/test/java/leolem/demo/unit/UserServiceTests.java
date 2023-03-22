@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.*;
 
-import leolem.demo.users.business.UserService;
+import leolem.demo.users.UserService;
 import leolem.demo.users.data.User;
 import leolem.demo.users.data.UserRepository;
 import lombok.val;
@@ -51,8 +51,7 @@ public class UserServiceTests {
 
   @Test
   void testUpdating() {
-    val name = "John";
-    val firstName = "Wayne";
+    val name = "John Wayne";
     val email = "jwayne@xyz.com";
     val password = "1234";
 
@@ -64,12 +63,10 @@ public class UserServiceTests {
     val user = userService.update(
         1,
         Optional.of(name),
-        Optional.of(firstName),
         Optional.of(email),
         Optional.of(password));
 
     assertEquals(user.getName(), name);
-    assertEquals(user.getFirstName(), firstName);
     assertEquals(user.getEmail(), email);
     assertEquals(user.getPassword(), password);
   }

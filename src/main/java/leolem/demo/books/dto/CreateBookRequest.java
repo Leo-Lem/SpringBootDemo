@@ -1,4 +1,4 @@
-package leolem.demo.books.web.dto;
+package leolem.demo.books.dto;
 
 import lombok.Data;
 

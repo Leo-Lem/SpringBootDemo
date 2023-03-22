@@ -1,4 +1,4 @@
-package leolem.demo.books.business;
+package leolem.demo.books;
 
 import java.time.LocalDate;
 import java.util.List;

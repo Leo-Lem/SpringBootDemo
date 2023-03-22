@@ -1,4 +1,4 @@
-package leolem.demo.users.web.dto;
+package leolem.demo.users.dto;
 
 import java.util.Set;
 
@@ -11,11 +11,10 @@ import lombok.RequiredArgsConstructor;
 public class UserResponse {
   private final long id;
   private final String name;
-  private final String firstName;
   private final String email;
   private final Set<User.Role> roles;
 
   public UserResponse(User user) {
-    this(user.getId(), user.getName(), user.getFirstName(), user.getEmail(), user.getRoles());
+    this(user.getId(), user.getName(), user.getEmail(), user.getRoles());
   }
 }

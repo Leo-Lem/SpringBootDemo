@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 
 import leolem.demo.books.data.Book;
 import leolem.demo.books.data.BookRepository;
-import leolem.demo.borrow.business.BorrowService;
+import leolem.demo.borrow.BorrowService;
 import leolem.demo.users.data.User;
 import leolem.demo.users.data.UserRepository;
 import lombok.val;

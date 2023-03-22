@@ -1,4 +1,4 @@
-package leolem.demo.books.web.dto;
+package leolem.demo.books.dto;
 
 import java.time.format.DateTimeFormatter;
 
@@ -14,6 +14,7 @@ public class BookResponse {
   private final String author;
   private final String publication;
   private final int availableCopies;
+  private final int borrowableCopies;
 
   public BookResponse(Book book) {
     this(
@@ -21,6 +22,7 @@ public class BookResponse {
         book.getTitle(),
         book.getAuthor(),
         book.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-        book.getAvailableCopies());
+        book.getAvailableCopies(),
+        book.getBorrowableCopies());
   }
 }

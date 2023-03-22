@@ -1,4 +1,4 @@
-package leolem.demo.auth.dto;
+package leolem.demo.users.dto;
 
 import java.util.Set;
 

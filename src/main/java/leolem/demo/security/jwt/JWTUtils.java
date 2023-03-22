@@ -1,21 +1,21 @@
 package leolem.demo.security.jwt;
 
+import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
-
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import leolem.demo.users.data.User;
 import lombok.val;
 
 @Component
 public class JWTUtils {
 
-  @Value("{leolem.app.jwtSecret}")
-  private String jwtSecret;
-
+  private Key jwtKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
   private int jwtExpiration = 86400;
 
   public String generateJWTToken(Authentication authentication) {
@@ -32,13 +32,14 @@ public class JWTUtils {
         .setSubject(user.getUsername())
         .setIssuedAt(issuance)
         .setExpiration(expiration)
-        .signWith(SignatureAlgorithm.HS512, jwtSecret)
+        .signWith(jwtKey)
         .compact();
   }
 
   public String getEmailFromJwtToken(String token) {
-    return Jwts.parser()
-        .setSigningKey(jwtSecret)
+    return Jwts.parserBuilder()
+        .setSigningKey(jwtKey)
+        .build()
         .parseClaimsJws(token)
         .getBody()
         .getSubject();
@@ -46,12 +47,13 @@ public class JWTUtils {
 
   public boolean validateJwtToken(String token) {
     try {
-      Jwts.parser()
-          .setSigningKey(jwtSecret)
+      Jwts.parserBuilder()
+          .setSigningKey(jwtKey)
+          .build()
           .parseClaimsJws(token);
 
       return true;
-    } catch (SignatureException e) {
+    } catch (SecurityException e) {
       System.err.println("Invalid JWT signature: " + e.getMessage());
     } catch (MalformedJwtException e) {
       System.err.println("Invalid JWT token:" + e.getMessage());

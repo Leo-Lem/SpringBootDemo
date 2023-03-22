@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import lombok.val;
-import leolem.demo.books.business.BookService;
+import leolem.demo.books.BookService;
 import leolem.demo.books.data.*;
 
 public class BookServiceTests {
