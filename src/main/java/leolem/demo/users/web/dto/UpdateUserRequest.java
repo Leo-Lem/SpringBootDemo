@@ -1,7 +1,6 @@
 package leolem.demo.users.web.dto;
 
 import java.util.Optional;
-
 import lombok.Data;
 
 @Data

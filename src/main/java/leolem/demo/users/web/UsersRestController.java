@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.users.business.UserService;
 import leolem.demo.users.web.dto.*;
@@ -42,20 +41,6 @@ public class UsersRestController {
     }
   }
 
-  @PostMapping
-  ResponseEntity<?> registerUser(@RequestBody RegisterUserRequest request) {
-    try {
-      val user = userService.register(
-          request.getName(), request.getFirstName(), request.getEmail(), request.getPassword());
-      val userResponse = new UserResponse(user);
-      return ResponseEntity.ok().body(userResponse);
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body("Invalid argument: " + e.getMessage());
-    } catch (EntityExistsException e) {
-      return ResponseEntity.status(409).body(e.getMessage());
-    }
-  }
-
   @PutMapping("/{id}")
   ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody UpdateUserRequest request) {
     try {
@@ -63,7 +48,7 @@ public class UsersRestController {
           id, request.getName(), request.getFirstName(), request.getEmail(), request.getPassword());
 
       val userResponse = new UserResponse(
-          user.getId(), user.getName(), user.getFirstName(), user.getEmail());
+          user.getId(), user.getName(), user.getFirstName(), user.getEmail(), user.getRoles());
 
       return ResponseEntity.ok().body(userResponse);
     } catch (IllegalArgumentException e) {

@@ -5,36 +5,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.users.data.User;
 import leolem.demo.users.data.UserRepository;
-import lombok.val;
 
 @Service
 public class UserService {
 
   @Autowired
   private UserRepository userRepository;
-
-  public User register(String name, String firstName, String email, String password)
-      throws IllegalArgumentException, EntityExistsException {
-    if (name == null || firstName == null || email == null || password == null) {
-      throw new IllegalArgumentException("Name, first name, e-mail AND password are required");
-    }
-
-    if (userRepository.existsByEmail(email))
-      throw new EntityExistsException("User with e-mail exists: " + email);
-
-    val user = User.builder()
-        .name(name)
-        .firstName(firstName)
-        .email(email)
-        .password(password)
-        .build();
-
-    return userRepository.save(user);
-  }
 
   public User readById(long id) throws EntityNotFoundException {
     return userRepository

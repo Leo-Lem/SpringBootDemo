@@ -30,24 +30,6 @@ public class UserServiceTests {
   }
 
   @Test
-  void testRegistering() {
-    val name = "Wayne";
-    val firstName = "John";
-    val email = "jwayne@xyz.com";
-    val password = "1234";
-
-    when(userRepository.save(any(User.class)))
-        .then(AdditionalAnswers.returnsFirstArg());
-
-    val book = userService.register(name, firstName, email, password);
-
-    assertEquals(book.getName(), name);
-    assertEquals(book.getFirstName(), firstName);
-    assertEquals(book.getEmail(), email);
-    assertEquals(book.getPassword(), password);
-  }
-
-  @Test
   void testReadingById() {
     when(userRepository.findById(anyLong()))
         .thenReturn(Optional.of(new User()));
