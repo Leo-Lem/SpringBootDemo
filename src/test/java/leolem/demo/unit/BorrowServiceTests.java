@@ -1,6 +1,8 @@
 package leolem.demo.unit;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -15,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.books.data.Book;
 import leolem.demo.books.data.BookRepository;
 import leolem.demo.borrow.BorrowService;
@@ -39,7 +42,7 @@ public class BorrowServiceTests {
     }
 
     @Test
-    void testBorrowingBook() {
+    void givenBookAndUserExist_whenBorrowingBook_thenBorrowingDoesNotThrow() {
         val book = mock(Book.class);
         val user = mock(User.class);
 
@@ -50,11 +53,11 @@ public class BorrowServiceTests {
         when(userRepository.findById(1L)).thenReturn((Optional.of(user)));
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        borrowService.borrowBook(1, 1);
+        assertDoesNotThrow(() -> borrowService.borrowBook(1, 1));
     }
 
     @Test
-    void testVerifyingStatus() {
+    void givenBookIsBorrowed_whenVerifyingStatus_thenReturnsTrue() {
         val book = mock(Book.class);
         val user = mock(User.class);
 
@@ -65,11 +68,10 @@ public class BorrowServiceTests {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         assertTrue(borrowService.verifyStatus(1, 1));
-        assertFalse(borrowService.verifyStatus(2, 1));
     }
 
     @Test
-    void testReturningBook() {
+    void givenBookIsNotBorrowed_whenVerifyingStatus_thenReturnsFalse() {
         val book = mock(Book.class);
         val user = mock(User.class);
 
@@ -79,7 +81,35 @@ public class BorrowServiceTests {
         when(userRepository.findById(1L)).thenReturn((Optional.of(user)));
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        borrowService.returnBook(1, 1);
+        assertFalse(borrowService.verifyStatus(2, 1));
+    }
+
+    @Test
+    void givenBookIsNotBorrowed_whenReturningBook_thenDoesThrow() {
+        val book = mock(Book.class);
+        val user = mock(User.class);
+
+        when(book.getId()).thenReturn(1L);
+        when(user.getId()).thenReturn(1L);
+        when(user.getBorrowedBooks()).thenReturn(new ArrayList<>(List.of(book)));
+        when(userRepository.findById(1L)).thenReturn((Optional.of(user)));
+        when(bookRepository.findById(2L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> borrowService.returnBook(2, 1));
+    }
+
+    @Test
+    void givenBookIsBorrowed_whenReturningBook_thenDoesNotThrow() {
+        val book = mock(Book.class);
+        val user = mock(User.class);
+
+        when(book.getId()).thenReturn(1L);
+        when(user.getId()).thenReturn(1L);
+        when(user.getBorrowedBooks()).thenReturn(new ArrayList<>(List.of(book)));
+        when(userRepository.findById(1L)).thenReturn((Optional.of(user)));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+
+        assertDoesNotThrow(() -> borrowService.returnBook(1, 1));
     }
 
 }

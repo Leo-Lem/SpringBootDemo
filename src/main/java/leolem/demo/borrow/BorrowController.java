@@ -42,8 +42,6 @@ public class BorrowController {
       return ResponseEntity.ok().build();
     } catch (EntityNotFoundException e) {
       return ResponseEntity.notFound().build();
-    } catch (IllegalStateException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
     }
   }
 }

@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import lombok.val;
 
 @RestController
 @RequestMapping("/users")
-public class UsersRestController {
+public class UsersController {
 
   @Autowired
   private UserService userService;
@@ -31,7 +30,7 @@ public class UsersRestController {
   private JWTUtils jwtUtils;
 
   @PostMapping
-  public ResponseEntity<?> registerUser(@Validated @RequestBody RegisterUserRequest request) {
+  public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpRequest request) {
     try {
       val user = userService.create(request.getName(), request.getEmail(), request.getPassword());
       val response = new UserResponse(user);
@@ -44,7 +43,7 @@ public class UsersRestController {
   }
 
   @PostMapping("/signin")
-  public ResponseEntity<?> authenticateUser(@Validated @RequestBody LoginRequest request) {
+  public ResponseEntity<?> authenticateUser(@Validated @RequestBody SignInRequest request) {
 
     val token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
     Authentication authentication = authenticationManager.authenticate(token);
@@ -86,7 +85,7 @@ public class UsersRestController {
   }
 
   @PutMapping("/{id}")
-  ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody UpdateUserRequest request) {
+  ResponseEntity<?> updateUser(@PathVariable("id") int id, @Validated @RequestBody UpdateUserRequest request) {
     try {
       val user = userService.update(id, request.getName(), request.getEmail(), request.getPassword());
       val response = new UserResponse(user);

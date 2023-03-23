@@ -7,13 +7,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import leolem.demo.security.jwt.AuthEntryPointJWT;
 import leolem.demo.security.jwt.AuthTokenFilter;
 
 @Configuration
@@ -24,9 +22,6 @@ public class SecurityConfiguration {
 
   @Autowired
   UserIDAuthorizationManager userIDAuthorizationManager;
-
-  @Autowired
-  private AuthEntryPointJWT unauthorizedHandler;
 
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -56,8 +51,6 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
     security.cors().and().csrf().disable()
-        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers(HttpMethod.GET, "/books", "/books/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/users", "/users/signin").permitAll())

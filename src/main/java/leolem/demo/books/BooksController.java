@@ -19,7 +19,7 @@ import lombok.val;
 
 @RestController
 @RequestMapping("/books")
-public class BooksRestController {
+public class BooksController {
 
   @Autowired
   private BookService bookService;
@@ -71,7 +71,7 @@ public class BooksRestController {
   }
 
   @PutMapping("/{id}")
-  ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody UpdateBookRequest request) {
+  ResponseEntity<?> update(@PathVariable("id") long id, @Validated @RequestBody UpdateBookRequest request) {
     try {
       val book = bookService.update(
           id,

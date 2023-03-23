@@ -30,7 +30,7 @@ public class UserServiceTests {
   }
 
   @Test
-  void testReadingById() {
+  void givenExists_whenReadingByID_thenReturnNotNull() {
     when(userRepository.findById(anyLong()))
         .thenReturn(Optional.of(new User()));
 
@@ -40,7 +40,7 @@ public class UserServiceTests {
   }
 
   @Test
-  void testReadingByEmail() {
+  void givenExists_whenReadingByEmail_thenReturnsNotNull() {
     when(userRepository.findByEmail(anyString()))
         .thenReturn(Optional.of(new User()));
 
@@ -50,7 +50,7 @@ public class UserServiceTests {
   }
 
   @Test
-  void testUpdating() {
+  void givenExists_whenUpdatingDetails_thenUpdatedDetailsMatch() {
     val name = "John Wayne";
     val email = "jwayne@xyz.com";
     val password = "1234";
@@ -72,7 +72,7 @@ public class UserServiceTests {
   }
 
   @Test
-  void testDeleting() {
+  void givenExists_whenDeleting_thenDoesNotThrow() {
     when(userRepository.existsById(anyLong()))
        .thenReturn(true);
 

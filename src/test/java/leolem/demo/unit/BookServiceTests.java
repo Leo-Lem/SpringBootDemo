@@ -27,7 +27,7 @@ public class BookServiceTests {
   }
 
   @Test
-  void testCreating() {
+  void whenCreatingBook_thenCreatedBookDetailsMatch() {
     val title = "Screwjack";
     val author = "Hunter S. Thompson";
     val publishedOn = LocalDate.parse("1991-01-01");
@@ -45,7 +45,7 @@ public class BookServiceTests {
   }
 
   @Test
-  void testReadingById() {
+  void givenBookExists_whenReadingByID_thenReturnsNotNull() {
     when(bookRepository.findById(anyLong()))
         .thenReturn(Optional.of(new Book()));
 
@@ -55,7 +55,7 @@ public class BookServiceTests {
   }
 
   @Test
-  void testReadingAll() {
+  void givenBookExists_whenReadingAll_thenReturnsMoreThan0() {
     when(bookRepository.findAll())
         .thenReturn(List.of(new Book()));
 
@@ -65,7 +65,7 @@ public class BookServiceTests {
   }
 
   @Test
-  void testUpdating() {
+  void givenBookExists_whenUpdatingWithNewDetails_thenUpdatedBookDetailsMatch() {
     val title = "Screwjack";
     val author = "Hunter S. Thompson";
     val publishedOn = LocalDate.parse("1991-01-01");
@@ -90,7 +90,7 @@ public class BookServiceTests {
   }
 
   @Test
-  void testDeleting() {
+  void givenBookExists_whenDeletingBook_thenDoesNotThrowError() {
     when(bookRepository.existsById(anyLong()))
        .thenReturn(true);
 
