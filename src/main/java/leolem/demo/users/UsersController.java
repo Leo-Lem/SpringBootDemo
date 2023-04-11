@@ -1,16 +1,16 @@
 package leolem.demo.users;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.*;
 import leolem.demo.security.jwt.JWTUtils;
 import leolem.demo.users.data.User;
 import leolem.demo.users.dto.*;
@@ -30,80 +30,73 @@ public class UsersController {
   private JWTUtils jwtUtils;
 
   @PostMapping
-  public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpRequest request) {
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserResponse registerUser(@Validated @RequestBody SignUpRequest request) {
     try {
       val user = userService.create(request.getName(), request.getEmail(), request.getPassword());
-      val response = new UserResponse(user);
-      return ResponseEntity.ok().body(response);
+
+      val token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+      Authentication authentication = authenticationManager.authenticate(token);
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+
+      return new UserResponse(user, jwtUtils.generateJWTToken(authentication));
     } catch (EntityExistsException e) {
-      return ResponseEntity
-          .status(409)
-          .body("Email is already in use!");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
     }
   }
 
   @PostMapping("/signin")
-  public ResponseEntity<?> authenticateUser(@Validated @RequestBody SignInRequest request) {
+  public UserResponse authenticateUser(@Validated @RequestBody SignInRequest request) {
 
     val token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
     Authentication authentication = authenticationManager.authenticate(token);
-
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    val jwt = jwtUtils.generateJWTToken(authentication);
-    val user = (User) authentication.getPrincipal();
 
-    val response = JWTResponse.builder()
-        .id(user.getId())
-        .email(user.getEmail())
-        .roles(user.getRoles())
-        .token(jwt)
-        .build();
-
-    return ResponseEntity.ok(response);
+    return new UserResponse((User) authentication.getPrincipal(), jwtUtils.generateJWTToken(authentication));
   }
 
   @GetMapping
-  ResponseEntity<?> fetchUserWithEmail(@RequestParam(name = "email", required = true) String email) {
+  public UserResponse fetchUserWithEmail(@RequestParam(name = "email", required = true) String email) {
     try {
       val user = userService.readByEmail(email);
-      val userResponse = new UserResponse(user);
-      return ResponseEntity.ok().body(userResponse);
+      val userResponse = new UserResponse(user, null);
+      return userResponse;
     } catch (EntityNotFoundException e) {
-      return ResponseEntity.notFound().build();
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
   @GetMapping("/{id}")
-  ResponseEntity<?> fetchUser(@PathVariable("id") long id) {
+  public UserResponse fetchUser(@PathVariable("id") long id) {
     try {
       val user = userService.readById(id);
-      val userResponse = new UserResponse(user);
-      return ResponseEntity.ok().body(userResponse);
+      return new UserResponse(user, null);
     } catch (EntityNotFoundException e) {
-      return ResponseEntity.notFound().build();
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
   @PutMapping("/{id}")
-  ResponseEntity<?> updateUser(@PathVariable("id") int id, @Validated @RequestBody UpdateUserRequest request) {
+  public UserResponse updateUser(@PathVariable("id") int id, @Validated @RequestBody UpdateUserRequest request) {
     try {
-      val user = userService.update(id, request.getName(), request.getEmail(), request.getPassword());
-      val response = new UserResponse(user);
-      return ResponseEntity.ok().body(response);
+      return new UserResponse(
+          userService.update(id, request.getName(), request.getEmail(), request.getPassword()),
+          null);
     } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body("Invalid argument: " + e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     } catch (EntityNotFoundException e) {
-      return ResponseEntity.notFound().build();
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
   @DeleteMapping("/{id}")
-  ResponseEntity<?> delete(@PathVariable("id") long id) {
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable("id") long id) {
+
     try {
       userService.delete(id);
-      return ResponseEntity.ok().build();
     } catch (EntityNotFoundException e) {
-      return ResponseEntity.notFound().build();
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 

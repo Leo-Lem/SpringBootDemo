@@ -12,7 +12,7 @@ public class BookResponse {
   private final long id;
   private final String title;
   private final String author;
-  private final String publication;
+  private final String publishedOn;
   private final int availableCopies;
   private final int borrowableCopies;
 

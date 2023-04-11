@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import io.micrometer.common.lang.NonNull;
 import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.books.data.Book;
-import leolem.demo.books.data.repo.BookQuery;
-import leolem.demo.books.data.repo.BookRepository;
+import leolem.demo.books.data.BookRepository;
 import lombok.val;
 
 @Service
@@ -40,11 +41,33 @@ public class BookService {
         .orElseThrow(() -> new EntityNotFoundException());
   }
 
-  public Set<Book> readByQuery(BookQuery query) throws EntityNotFoundException {
-    val books = repo.findByQuery(query);
-    if (books.isEmpty())
-      throw new EntityNotFoundException("No books matching query were found");
-    return books;
+  public List<Book> readAllMatching(
+      @NonNull Book example,
+      @NonNull Optional<List<String>> sort,
+      @NonNull Optional<Boolean> sortAscending) {
+    val sortOrder = sort
+        .map(s -> Sort.by(sortAscending.orElse(true) ? Sort.Direction.ASC : Sort.Direction.DESC,
+            s.toArray(new String[0])))
+        .orElse(Sort.unsorted());
+
+    return repo.findAll(Example.of(example), sortOrder);
+  }
+
+  public Page<Book> readAllMatching(
+      @NonNull Book example,
+      @NonNull Optional<Integer> page,
+      @NonNull Optional<Integer> size,
+      @NonNull Optional<List<String>> sort,
+      @NonNull Optional<Boolean> sortAscending) {
+    val sortOrder = sort
+        .map(s -> Sort.by(sortAscending.orElse(true) ? Sort.Direction.ASC : Sort.Direction.DESC,
+            s.toArray(new String[0])))
+        .orElse(Sort.unsorted());
+
+    val pageRequest = page
+        .map(p -> (Pageable) PageRequest.of(p, size.orElse(10), sortOrder));
+
+    return repo.findAll(Example.of(example), pageRequest.get());
   }
 
   public Book update(

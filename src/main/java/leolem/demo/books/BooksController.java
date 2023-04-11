@@ -1,23 +1,21 @@
 package leolem.demo.books;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.List;
+import java.time.format.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.persistence.EntityNotFoundException;
-import leolem.demo.books.data.repo.BookQuery;
-import leolem.demo.books.dto.BookResponse;
-import leolem.demo.books.dto.CreateBookRequest;
-import leolem.demo.books.dto.UpdateBookRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import leolem.demo.books.data.Book;
+import leolem.demo.books.dto.*;
 import lombok.val;
 
 @RestController
@@ -54,26 +52,44 @@ public class BooksController {
 
   @GetMapping
   public List<BookResponse> fetchAllBooks(
-      @RequestParam(name = "title", required = false) String title,
-      @RequestParam(name = "author", required = false) String author,
-      @RequestParam(name = "isAvailable", required = false) Boolean isAvailable,
-      @RequestParam(name = "publishedAfter", required = false) LocalDate publishedAfter,
-      @RequestParam(name = "publishedBefore", required = false) LocalDate publishedBefore) {
-    try {
-      return bookService.readByQuery(
-          BookQuery.builder()
-              .title(title)
-              .author(author)
-              .isAvailable(isAvailable)
-              .publishedAfter(publishedAfter)
-              .publishedBefore(publishedBefore)
-              .build())
-          .stream()
-          .map(BookResponse::new)
-          .collect(Collectors.toList());
-    } catch (EntityNotFoundException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
+      HttpServletResponse response,
+      @RequestParam Optional<Integer> page,
+      @RequestParam Optional<Integer> size,
+      @RequestParam Optional<List<String>> sort,
+      @RequestParam Optional<Boolean> sortAscending,
+      @RequestParam Map<String, String> params) {
+    Book example = Book.builder()
+        .title(params.get("title"))
+        .author(params.get("author"))
+        .availableCopies(Optional.ofNullable(params.get("availableCopies")).map(Integer::parseInt).orElse(null))
+        .publishedOn(Optional.ofNullable(params.get("publishedOn")).map(LocalDate::parse).orElse(null))
+        .build();
+    List<Book> books;
+
+    if (page.isPresent()) {
+      Page<Book> bookPage = bookService.readAllMatching(example, page, size, sort, sortAscending);
+
+      response.setHeader("X-Total-Count", String.valueOf(bookPage.getTotalElements()));
+
+      response.addHeader("Link", buildPageLinkHeader("first", 0, bookPage));
+      response.addHeader("Link", buildPageLinkHeader("last", bookPage.getTotalPages(), bookPage));
+      if (bookPage.hasNext())
+        response.addHeader("Link", buildPageLinkHeader("next", bookPage.getNumber() + 1, bookPage));
+      if (bookPage.hasPrevious())
+        response.addHeader("Link", buildPageLinkHeader("previous", bookPage.getNumber() - 1, bookPage));
+
+      books = bookPage.getContent();
+    } else
+      books = bookService.readAllMatching(example, sort, sortAscending);
+
+    return books.stream().map(BookResponse::new).collect(Collectors.toList());
+  }
+
+  private String buildPageLinkHeader(String rel, Integer page, Page<Book> bookPage) {
+    val builder = ServletUriComponentsBuilder.fromCurrentRequest();
+    builder.replaceQueryParam("page", page);
+    builder.replaceQueryParam("size", bookPage.getSize());
+    return "<" + builder.toUriString() + ">; rel=\"" + rel + "\"";
   }
 
   @GetMapping("/{id}")

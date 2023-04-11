@@ -10,7 +10,6 @@ import org.mockito.*;
 import lombok.val;
 import leolem.demo.books.BookService;
 import leolem.demo.books.data.*;
-import leolem.demo.books.data.repo.BookRepository;
 
 public class BookServiceTests {
 
