@@ -19,7 +19,7 @@ import org.mockito.MockitoAnnotations;
 
 import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.books.data.Book;
-import leolem.demo.books.data.BookRepository;
+import leolem.demo.books.data.repo.BookRepository;
 import leolem.demo.borrow.BorrowService;
 import leolem.demo.users.data.User;
 import leolem.demo.users.data.UserRepository;

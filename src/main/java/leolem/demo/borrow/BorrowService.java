@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import leolem.demo.books.data.*;
+import leolem.demo.books.data.repo.BookRepository;
 import leolem.demo.users.data.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

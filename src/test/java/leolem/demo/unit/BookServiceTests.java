@@ -4,14 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import lombok.val;
 import leolem.demo.books.BookService;
 import leolem.demo.books.data.*;
+import leolem.demo.books.data.repo.BookRepository;
 
 public class BookServiceTests {
 
@@ -52,16 +51,6 @@ public class BookServiceTests {
     val book = bookService.readById(1);
 
     assertNotNull(book);
-  }
-
-  @Test
-  void givenBookExists_whenReadingAll_thenReturnsMoreThan0() {
-    when(bookRepository.findAll())
-        .thenReturn(List.of(new Book()));
-
-    val books = bookService.readAll();
-
-    assertTrue(books.size() > 0);
   }
 
   @Test

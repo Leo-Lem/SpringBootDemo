@@ -24,11 +24,11 @@ public class Book {
   @Column(name = "author")
   private String author;
 
-  @Column(name = "publication")
+  @Column(name = "publishedOn")
   private LocalDate publishedOn;
 
-  @Column(name = "available_copies")
-  private int availableCopies;
+  @Column(name = "availableCopies")
+  private Integer availableCopies;
 
   @ManyToMany(mappedBy = "borrowedBooks")
   private List<User> borrowers;

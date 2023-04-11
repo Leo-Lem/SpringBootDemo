@@ -44,12 +44,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-    	<groupId>com.h2database</groupId>
-    	<artifactId>h2</artifactId>
-    	<scope>test</scope>
-		</dependency>
-
 		<!--JWT-->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -73,9 +67,9 @@
 
 		<!--OTHERS-->
 		<dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-    </dependency>
+    	<groupId>com.h2database</groupId>
+    	<artifactId>h2</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -90,6 +84,22 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>leolem.demo.Application</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.persistence.EntityNotFoundException;
+import leolem.demo.books.data.repo.BookQuery;
 import leolem.demo.books.dto.BookResponse;
 import leolem.demo.books.dto.CreateBookRequest;
 import leolem.demo.books.dto.UpdateBookRequest;
@@ -50,11 +53,27 @@ public class BooksController {
   }
 
   @GetMapping
-  public List<BookResponse> fetchAllBooks() {
-    return bookService.readAll()
-        .stream()
-        .map(BookResponse::new)
-        .collect(Collectors.toList());
+  public List<BookResponse> fetchAllBooks(
+      @RequestParam(name = "title", required = false) String title,
+      @RequestParam(name = "author", required = false) String author,
+      @RequestParam(name = "isAvailable", required = false) Boolean isAvailable,
+      @RequestParam(name = "publishedAfter", required = false) LocalDate publishedAfter,
+      @RequestParam(name = "publishedBefore", required = false) LocalDate publishedBefore) {
+    try {
+      return bookService.readByQuery(
+          BookQuery.builder()
+              .title(title)
+              .author(author)
+              .isAvailable(isAvailable)
+              .publishedAfter(publishedAfter)
+              .publishedBefore(publishedBefore)
+              .build())
+          .stream()
+          .map(BookResponse::new)
+          .collect(Collectors.toList());
+    } catch (EntityNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
   }
 
   @GetMapping("/{id}")

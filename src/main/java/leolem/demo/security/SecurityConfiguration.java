@@ -52,7 +52,7 @@ public class SecurityConfiguration {
   public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
     security.cors().and().csrf().disable()
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.GET, "/books", "/books/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/books*", "/books/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/users", "/users/signin").permitAll())
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers(HttpMethod.GET, "/users/**", "/books", "/books/**").hasRole("USER")

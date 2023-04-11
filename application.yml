@@ -1,0 +1,14 @@
+spring:
+  profiles.active: dev
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+
+  jpa:
+    properties.hibernate:
+      jdbc.lob.non_contextual_creation: true
+      dialect: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: create
+    open-in-view: true
